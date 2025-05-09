@@ -10,7 +10,6 @@ BUILD_TIME=$(shell date +%FT%T%z)
 GIT_COMMIT=$(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 
 # Environment variables (can be overridden via command line)
-ENV ?= development
 DEBUG ?= false
 
 # LDFLAGS for embedding version info and environment variables
@@ -35,39 +34,6 @@ install: build
 # 运行应用
 run:
 	@go run $(LD_FLAGS) $(MAIN_FILE) $(ARGS)
-
-
-# 运行示例命令
-examples:
-	@echo "\n运行hello命令示例:"
-	@go run $(MAIN_FILE) hello
-	@echo "\n运行带参数的hello命令:"
-	@go run $(MAIN_FILE) hello "命令行工具"
-	@echo "\n运行list命令:"
-	@go run $(MAIN_FILE) list
-	@echo "\n运行count命令:"
-	@go run $(MAIN_FILE) count 10
-
-# 运行测试
-test:
-	@echo "Running tests..."
-	@go test -v ./...
-
-# 运行代码覆盖率测试
-cover:
-	@echo "Running tests with coverage..."
-	@go test -coverprofile=coverage.out ./...
-	@go tool cover -html=coverage.out
-
-# WebAssembly 相关变量
-WASM_MAIN=cmd/app/main.go
-WASM_OUT=npm/bin/verilis.wasm
-
-# 构建 WebAssembly
-wasm:
-	@echo "Building WebAssembly..."
-	@GOOS=wasip1 GOARCH=wasm go build $(LD_FLAGS) -o $(WASM_OUT) $(WASM_MAIN)
-	@echo "WebAssembly build complete: $(WASM_OUT)"
 
 # 运行代码质量检查
 lint:
