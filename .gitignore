@@ -35,3 +35,5 @@ i18n
 verilis.config.json
 
 bin
+
+.env

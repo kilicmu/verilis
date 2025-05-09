@@ -1,7 +1,7 @@
 .PHONY: build install run test clean release help wasm
 
 APP_NAME=verilis
-MAIN_FILE=cmd/app/main.go
+MAIN_FILE=cmd/main.go
 BUILD_DIR=bin
 
 # Build information
@@ -49,6 +49,9 @@ deps:
 	@echo "Installing dependencies..."
 	@go mod tidy
 	@go mod verify
+
+test:
+	@go test ./...
 
 # 为多平台构建发布版本
 release: clean
