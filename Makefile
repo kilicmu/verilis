@@ -5,7 +5,7 @@ MAIN_FILE=cmd/main.go
 BUILD_DIR=bin
 
 # Build information
-VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "0.1.0")
+VERSION ?= $(shell git describe --tags --always 2>/dev/null || echo "0.1.0")
 BUILD_TIME=$(shell date +%FT%T%z)
 GIT_COMMIT=$(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 
@@ -55,7 +55,7 @@ test:
 
 # 为多平台构建发布版本
 release: clean
-	@echo "Building release binaries v$(VERSION)..."
+	@echo "Building release binaries $(VERSION)..."
 	@mkdir -p $(BUILD_DIR)/release
 	@# Linux builds
 	@GOOS=linux GOARCH=amd64 go build $(LD_FLAGS) -o $(BUILD_DIR)/release/$(APP_NAME)-linux-amd64 $(MAIN_FILE)
@@ -67,10 +67,6 @@ release: clean
 	@GOOS=windows GOARCH=amd64 go build $(LD_FLAGS) -o $(BUILD_DIR)/release/$(APP_NAME)-windows-amd64.exe $(MAIN_FILE)
 	@# Create checksums
 	@cd $(BUILD_DIR)/release && shasum -a 256 * > checksums.txt
-	@# Create installation script
-	@./scripts/generate_install_script.sh "$(VERSION)" "$(APP_NAME)"
-	@echo "Release binaries created in $(BUILD_DIR)/release"
-	@echo "Installation script created: install.sh"
 
 # 压缩发布文件
 package: release

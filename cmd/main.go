@@ -41,6 +41,7 @@ func main() {
 
 func printHelp() {
 	fmt.Printf("\033[32m 「%s」 is an Ai-driven i18n solution\033[0m \n", AppName)
+	fmt.Printf("\033[32m version: %s\033[0m \n", Version)
 	fmt.Println("Usage:")
 	fmt.Printf("  %s <command> [arguments...]\n\n", AppName)
 
