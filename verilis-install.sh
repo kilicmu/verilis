@@ -4,32 +4,33 @@
 # This script automatically detects your platform and installs the appropriate binary
 
 APP_NAME="verilis"
-GITHUB_REPO="https://github.com/user/verilis"
+# GITHUB_REPO="https://github.com/kilicmu/verilis"
+GITHUB_REPO="https://api.github.com/repos/kilicmu/verilis"
 
 # Function to get the latest version from GitHub
 get_latest_version() {
   print_color "$BLUE" "Checking for the latest version..."
   
   if command_exists curl; then
-    LATEST_VERSION=$(curl -s $GITHUB_REPO/releases/latest | grep -o 'tag/v[0-9]\+\.[0-9]\+\.[0-9]\+' | cut -d '/' -f 2 | cut -c 2-)
+    LATEST_VERSION=$(curl -s $GITHUB_REPO/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
   elif command_exists wget; then
-    LATEST_VERSION=$(wget -qO- $GITHUB_REPO/releases/latest | grep -o 'tag/v[0-9]\+\.[0-9]\+\.[0-9]\+' | cut -d '/' -f 2 | cut -c 2-)
+    LATEST_VERSION=$(wget -qO- $GITHUB_REPO/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
   else
     # Default to the version passed to the script if we can't check
-    LATEST_VERSION="0.1.0"
+    LATEST_VERSION="0.0.1"
     print_color "$YELLOW" "Could not check for latest version. Using version $LATEST_VERSION."
   fi
   
   # If we couldn't get the latest version, use the provided version
   if [ -z "$LATEST_VERSION" ]; then
-    LATEST_VERSION="0.1.0"
+    LATEST_VERSION="0.0.1"
     print_color "$YELLOW" "Could not determine latest version. Using version $LATEST_VERSION."
   else
     print_color "$GREEN" "Latest version: $LATEST_VERSION"
   fi
   
   VERSION="$LATEST_VERSION"
-  DOWNLOAD_BASE_URL="$GITHUB_REPO/releases/download/v$VERSION"
+  DOWNLOAD_BASE_URL="$GITHUB_REPO/releases/download/$VERSION"
 }
 
 # Default installation directory (will be set based on platform)
@@ -179,7 +180,7 @@ download_binary() {
   
   if [ "$LOCAL_INSTALL" = true ]; then
     # Local installation
-    print_color "$BLUE" "Installing $APP_NAME v$VERSION for $PLATFORM from local files..."
+    print_color "$BLUE" "Installing $APP_NAME $VERSION for $PLATFORM from local files..."
     
     # Check if the binary exists locally
     if [ -f "./bin/release/$BINARY_NAME" ]; then
@@ -191,7 +192,7 @@ download_binary() {
   else
     # Remote installation
     DOWNLOAD_URL="$DOWNLOAD_BASE_URL/$ARCHIVE_NAME"
-    print_color "$BLUE" "Downloading $APP_NAME v$VERSION for $PLATFORM..."
+    print_color "$BLUE" "Downloading $APP_NAME $VERSION for $PLATFORM..."
     print_color "$BLUE" "URL: $DOWNLOAD_URL"
     
     if command_exists curl; then
@@ -251,7 +252,7 @@ main() {
   create_install_dir
   download_binary
   
-  print_color "$GREEN" "✓ $APP_NAME v$VERSION has been installed successfully!"
+  print_color "$GREEN" "✓ $APP_NAME $VERSION has been installed successfully!"
   print_color "$GREEN" "You can now run it using: $APP_NAME"
   
   # Verify installation
